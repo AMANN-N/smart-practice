@@ -1,0 +1,35 @@
+{
+  "topic_name": "python_basics",
+  "root": {
+    "id": "root_python_basics",
+    "name": "python_basics",
+    "description": "Mastery of python_basics",
+    "path": "python_basics",
+    "parent_id": null,
+    "children": [],
+    "is_leaf": true,
+    "questions": {
+      "beginner": [],
+      "intermediate": [],
+      "advanced": []
+    },
+    "prerequisites": []
+  },
+  "node_map": {
+    "root_python_basics": {
+      "id": "root_python_basics",
+      "name": "python_basics",
+      "description": "Mastery of python_basics",
+      "path": "python_basics",
+      "parent_id": null,
+      "children": [],
+      "is_leaf": true,
+      "questions": {
+        "beginner": [],
+        "intermediate": [],
+        "advanced": []
+      },
+      "prerequisites": []
+    }
+  }
+}

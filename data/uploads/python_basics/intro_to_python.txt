@@ -1,0 +1,28 @@
+Python Basics: Variables and Loops
+
+1. Variables
+A variable is a container for storing data values. In Python, a variable is created the moment you first assign a value to it.
+Example:
+x = 5
+y = "John"
+
+2. Data Types
+Python has the following data types built-in by default:
+- Text Type: str
+- Numeric Types: int, float, complex
+- Sequence Types: list, tuple, range
+
+3. For Loops
+A for loop is used for iterating over a sequence (that is either a list, a tuple, a dictionary, a set, or a string).
+Example:
+fruits = ["apple", "banana", "cherry"]
+for x in fruits:
+  print(x)
+
+4. While Loops
+With the while loop we can execute a set of statements as long as a condition is true.
+Example:
+i = 1
+while i < 6:
+  print(i)
+  i += 1

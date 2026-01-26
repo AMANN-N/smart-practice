@@ -1,0 +1,107 @@
+{
+    "topic_name": "python_basics",
+    "root": {
+        "id": "root_python_basics",
+        "name": "python_basics",
+        "description": "Mastery of python_basics",
+        "path": "python_basics",
+        "parent_id": null,
+        "children": [
+            {
+                "id": "node_variables",
+                "name": "Variables",
+                "description": "Storing data values.",
+                "path": "python_basics > Variables",
+                "parent_id": "root_python_basics",
+                "children": [
+                    {
+                        "id": "node_var_assignment",
+                        "name": "Variable Assignment",
+                        "description": "Using the = operator.",
+                        "path": "python_basics > Variables > Variable Assignment",
+                        "parent_id": "node_variables",
+                        "children": [],
+                        "is_leaf": true,
+                        "questions": {
+                            "beginner": [
+                                {
+                                    "id": "q1",
+                                    "difficulty": "beginner",
+                                    "type": "multiple_choice",
+                                    "content": "Which operator is used for assignment?",
+                                    "options": [
+                                        "=",
+                                        "==",
+                                        "->",
+                                        ":"
+                                    ],
+                                    "correct_answer": "=",
+                                    "explanation": "= assigns values.",
+                                    "metadata": {
+                                        "generated_by": "gemini"
+                                    }
+                                }
+                            ],
+                            "intermediate": [],
+                            "advanced": []
+                        },
+                        "prerequisites": []
+                    },
+                    {
+                        "id": "node_naming_conventions",
+                        "name": "Naming Conventions",
+                        "description": "Rules for identifiers.",
+                        "path": "python_basics > Variables > Naming Conventions",
+                        "parent_id": "node_variables",
+                        "children": [],
+                        "is_leaf": true,
+                        "questions": {
+                            "beginner": [],
+                            "intermediate": [
+                                {
+                                    "id": "q2",
+                                    "difficulty": "intermediate",
+                                    "type": "multiple_choice",
+                                    "content": "Which variable name is invalid?",
+                                    "options": [
+                                        "my_var",
+                                        "2var",
+                                        "_var",
+                                        "var2"
+                                    ],
+                                    "correct_answer": "2var",
+                                    "explanation": "Variables cannot start with a digit.",
+                                    "metadata": {
+                                        "generated_by": "gemini"
+                                    }
+                                }
+                            ],
+                            "advanced": []
+                        },
+                        "prerequisites": []
+                    }
+                ],
+                "is_leaf": false,
+                "questions": {},
+                "prerequisites": []
+            },
+            {
+                "id": "node_control_flow",
+                "name": "Control Flow",
+                "description": "Directing execution order.",
+                "path": "python_basics > Control Flow",
+                "parent_id": "root_python_basics",
+                "children": [],
+                "is_leaf": false,
+                "questions": {},
+                "prerequisites": [
+                    "node_variables"
+                ]
+            }
+        ],
+        "is_leaf": false,
+        "questions": {},
+        "prerequisites": []
+    },
+    "node_map": {}
+}
