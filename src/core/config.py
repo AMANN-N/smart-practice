@@ -10,11 +10,24 @@ class Config:
     # Ingestion Settings
     MAX_HIERARCHY_DEPTH = 3
     SUBTOPICS_PER_NODE = (3, 5) # (Min, Max) width
+    # Ingestion Settings
+    MAX_HIERARCHY_DEPTH = 3
+    SUBTOPICS_PER_NODE = (3, 5) # (Min, Max) width
     QUESTIONS_PER_LEAF = {
         "beginner": 2,
         "intermediate": 2,
         "advanced": 1
     }
+    
+    # Rate Limiting
+    API_RETRY_COUNT = 3
+    API_RETRY_DELAY_EXP = 2 # Exponential backoff base
+    API_DELAY_SECONDS = 2   # Sleep between calls
+
+    # Tutor Settings
+    TUTOR_MASTERY_STREAK = 3      # Correct answers needed to promote difficulty
+    TUTOR_STARTING_DIFFICULTY = "intermediate"
+    TUTOR_MAX_DYNAMIC_RETRIES = 3 # Max dynamic questions if user keeps failing
 
     # Pricing (USD per 1M tokens) - Based on Gemini 1.5 Flash rates as placeholder
     PRICE_PER_1M_INPUT_TOKENS = 0.10

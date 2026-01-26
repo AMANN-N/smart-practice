@@ -125,9 +125,9 @@ class IngestionAgent:
         """
         
         try:
-            if not self.model: raise Exception("No API Key")
-            response = self.model.generate_content(prompt, generation_config={"response_mime_type": "application/json"})
-            self._update_costs(response)
+            response = self._call_gemini_with_retry(prompt)
+            if not response: raise Exception("Failed to alert LLM")
+            
             data = json.loads(response.text)
             
             # Recursive helper to build KnowledgeNodes from JSON
@@ -211,9 +211,9 @@ class IngestionAgent:
         {context[:30000]}
         """
         try:
-            if not self.model: raise Exception("No API Key")
-            response = self.model.generate_content(prompt, generation_config={"response_mime_type": "application/json"})
-            self._update_costs(response)
+            response = self._call_gemini_with_retry(prompt)
+            if not response: return questions
+
             data = json.loads(response.text)
             
             for item in data.get("questions", []):
@@ -236,6 +236,40 @@ class IngestionAgent:
         except Exception as e:
             print(f"      ⚠️ Error generating questions for {node.name}: {e}")
             return questions
+
+    def _call_gemini_with_retry(self, prompt: str):
+        """
+        Robust wrapper for API calls with Retries and Rate Limiting.
+        """
+        if not self.model: return None
+        
+        retries = Config.API_RETRY_COUNT
+        delay = Config.API_DELAY_SECONDS
+        
+        for attempt in range(retries + 1):
+            try:
+                response = self.model.generate_content(prompt, generation_config={"response_mime_type": "application/json"})
+                self._update_costs(response)
+                
+                # Success! Rate limit sleep
+                time.sleep(Config.API_DELAY_SECONDS)
+                return response
+                
+            except Exception as e:
+                is_last_attempt = (attempt == retries)
+                error_msg = str(e)
+                
+                # Check for 429
+                if "429" in error_msg:
+                    wait_time = Config.API_RETRY_DELAY_EXP ** (attempt + 1)
+                    print(f"      ⏳ Hit Rate Limit (429). Retrying in {wait_time}s... (Attempt {attempt+1}/{retries})")
+                    time.sleep(wait_time)
+                else:
+                    print(f"      ⚠️ API Error: {e}")
+                    if is_last_attempt: return None
+                    time.sleep(1) # Short wait for other errors
+        
+        return None
 
     def _update_costs(self, response):
         try:
