@@ -134,11 +134,19 @@ if not q:
         st.rerun()
     st.stop()
 
-# 1. Question Card
+# 1. Breadcrumbs & Question Card
+active_node_id = st.session_state.agent.session.active_node_id
+active_node = st.session_state.agent.kb.node_map.get(active_node_id)
+# Clean path: "python_basics > Variables > Definition" -> "Variables / Definition"
+breadcrumb = active_node.path.replace(" > ", "  /  ") if active_node else ""
+
 st.markdown(f"""
+<div style="color: #646cff; font-size: 14px; font-weight: 600; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;">
+    📍 {breadcrumb}
+</div>
 <div class="question-card">
     <div style="font-size: 14px; text-transform: uppercase; color: #888; margin-bottom: 10px;">
-        {q.difficulty.name} • Streak: {st.session_state.agent.session.node_states[st.session_state.agent.session.active_node_id].correct_streak}
+        {q.difficulty.name} • Streak: {st.session_state.agent.session.node_states[active_node_id].correct_streak} / {Config.TUTOR_MASTERY_STREAK}
     </div>
     {q.content}
 </div>

@@ -168,17 +168,17 @@ class TutorAgent:
     # --- Helpers ---
 
     def _get_or_select_active_node(self) -> Optional[KnowledgeNode]:
-        """DFS/BFS to find next unmastered leaf."""
+        """DFS (Document Order) to find next unmastered leaf."""
         if self.session.active_node_id:
             return self.kb.node_map[self.session.active_node_id]
         
         # Traversal: Find first LEAF that is NOT in coverage_map
-        # Using the node_map to find root is tricky if not stored. 
-        # KB has 'root'.
-        
+        # Use a stack for DFS (Last-In, First-Out)
+        # We start with Root
         stack = [self.kb.root]
+        
         while stack:
-            node = stack.pop(0) # BFS if pop(0), DFS if pop()
+            node = stack.pop() # Take from top
             
             if node.is_leaf:
                 if not self.session.coverage_map.get(node.id):
@@ -186,8 +186,10 @@ class TutorAgent:
                     self.session.active_node_id = node.id
                     return node
             
-            # Add children
-            stack.extend(node.children)
+            # DFS: Push children in REVERSE order so the first child is popped first
+            # e.g. Children [A, B]. Push B, then A. Stack: [B, A]. Pop A.
+            for child in reversed(node.children):
+                stack.append(child)
             
         return None
 
