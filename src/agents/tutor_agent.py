@@ -6,7 +6,7 @@ import google.generativeai as genai
 
 from src.core.schema import (
     KnowledgeBase, KnowledgeNode, Question, Difficulty, 
-    SessionState, UserSkillState, AssessmentResult
+    SessionState, UserSkillState, AssessmentResult, QuestionType
 )
 from src.core.config import Config
 
@@ -255,7 +255,13 @@ class TutorAgent:
         try:
             resp = self.model.generate_content(prompt, generation_config={"response_mime_type": "application/json"})
             data = json.loads(resp.text)
-            return Question(
+            
+            # Handle edge case where LLM returns a list instead of single object
+            if isinstance(data, list):
+                if not data: raise ValueError("Empty response list")
+                data = data[0]
+                
+            q = Question(
                 id=str(uuid.uuid4()),
                 difficulty=difficulty,
                 type=QuestionType.MULTIPLE_CHOICE,
@@ -265,6 +271,13 @@ class TutorAgent:
                 explanation=data.get("explanation", ""),
                 metadata={"generated": True}
             )
+            
+            # CRITICAL FIX: Save to node so submit_answer can find it!
+            if difficulty not in node.questions:
+                node.questions[difficulty] = []
+            node.questions[difficulty].append(q)
+            
+            return q
         except Exception as e:
             print(f"Dynamic Gen Failed: {e}")
             return None
