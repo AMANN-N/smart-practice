@@ -5,23 +5,43 @@
     "6cd002e8-76f4-4305-9c0e-5a8e6ec9ccac": {
       "node_id": "6cd002e8-76f4-4305-9c0e-5a8e6ec9ccac",
       "mastery_score": 0.0,
-      "attempts": 11,
-      "correct_streak": 0,
+      "attempts": 4,
+      "correct_streak": 4,
       "history": [
         "931f2115-8c9a-4802-a38a-5bdaea36a6a6",
         "96867fc7-cd3b-4c98-9886-8fe8c98fe00c",
-        "48655cad-d633-469b-8b50-0483df8d28be",
-        "dbd42b73-c10b-4e86-9190-ea1691a9cc63",
-        "79f74b17-5092-4119-804f-dbd69c691c92",
-        "795e7e64-2cd6-4029-8a76-c3a1e4b5b584",
-        "142a9307-f646-40e4-9433-56922d78c3a8",
-        "5848d272-da07-43a1-a04a-27a1146c4003",
-        "b5ecc51b-c269-4101-bb20-1f485911fa8b",
-        "a03944dd-a7b9-499b-b419-15b1386da009",
-        "bc58620d-1ed3-4f28-b9e0-4b9e5b211f13"
+        "fb183ee9-8131-491e-973e-ffb19443c9b9",
+        "142a9307-f646-40e4-9433-56922d78c3a8"
+      ]
+    },
+    "a0d4da7b-0305-40ad-aadd-41d4e15d6d74": {
+      "node_id": "a0d4da7b-0305-40ad-aadd-41d4e15d6d74",
+      "mastery_score": 0.0,
+      "attempts": 4,
+      "correct_streak": 4,
+      "history": [
+        "d87574b8-d599-4a4a-b39c-48c8eac59c1e",
+        "1418afe1-7616-40cd-9faa-a917f87c379c",
+        "c5e5ca31-66a6-4d41-ba57-726e2a2ade9b",
+        "2961ccb1-a44e-49dc-aa3a-1e98b545cb79"
+      ]
+    },
+    "3025d560-cd38-4fb2-9fa5-b0c7b9f23571": {
+      "node_id": "3025d560-cd38-4fb2-9fa5-b0c7b9f23571",
+      "mastery_score": 0.0,
+      "attempts": 4,
+      "correct_streak": 0,
+      "history": [
+        "3134d386-07d5-480f-9c79-8cd8a575c4b4",
+        "db99ee78-d486-457f-b508-93306d7d4a98",
+        "a0c78471-0a52-48ce-ab3c-141a4a277388",
+        "a98a46f3-a8c3-486d-b228-8057675b33ea"
       ]
     }
   },
-  "active_node_id": "6cd002e8-76f4-4305-9c0e-5a8e6ec9ccac",
-  "coverage_map": {}
+  "active_node_id": "3025d560-cd38-4fb2-9fa5-b0c7b9f23571",
+  "coverage_map": {
+    "6cd002e8-76f4-4305-9c0e-5a8e6ec9ccac": true,
+    "a0d4da7b-0305-40ad-aadd-41d4e15d6d74": true
+  }
 }

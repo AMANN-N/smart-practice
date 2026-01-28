@@ -120,9 +120,7 @@ if not selected_topic:
     st.info("👈 Select or Ingest a topic to begin.")
     st.stop()
 
-# Progress Bar (Mockup for now, could use session stats)
-# progress = len(st.session_state.agent.session.coverage_map.keys()) / 10 # heuristic
-# st.progress(progress, text="Mastery Progress")
+# --- Main UI Logic ---
 
 q = st.session_state.current_q
 
@@ -134,11 +132,85 @@ if not q:
         st.rerun()
     st.stop()
 
+# --- Knowledge Graph Visualization ---
+from streamlit_agraph import agraph, Node, Edge, Config as GraphConfig
+
+def render_graph():
+    nodes = []
+    edges = []
+    
+    agent = st.session_state.agent
+    if not agent.kb: return
+    
+    # BFS to build graph
+    stack = [agent.kb.root]
+    
+    while stack:
+        node = stack.pop(0)
+        
+        # Determine Color & Icon
+        color = "#4B4B4B" # Default Gray
+        label_color = "white"
+        symbol_type = "circle" # default
+        
+        if node.id == agent.session.active_node_id:
+            color = "#33b5e5" # Active Blue
+            label_color = "#33b5e5"
+            symbol_type = "diamond"
+        elif agent.session.coverage_map.get(node.id):
+            color = "#00C851" # Mastered Green
+            
+        # Add Node
+        nodes.append(Node(
+            id=node.id,
+            label=node.name,
+            size=25 if not node.parent_id else (20 if not node.is_leaf else 15),
+            color=color,
+            font={'color': label_color},
+            symbolType=symbol_type
+        ))
+        
+        # Add Edge
+        if node.parent_id:
+            edges.append(Edge(
+                source=node.parent_id,
+                target=node.id,
+                color="#555555"
+            ))
+            
+        stack.extend(node.children)
+        
+
+    config = GraphConfig(
+        width='100%',
+        height=500,
+        directed=True,
+        physics=True,
+        hierarchy=False, 
+        node={'labelProperty': 'label', 'renderLabel': True},
+        link={'renderLabel': False},
+        collapsible=False,
+        nodeHighlightBehavior=True,
+        highlightColor="#F7A7A6"
+    )
+    
+    return agraph(nodes=nodes, edges=edges, config=config)
+
+with st.expander("🗺️ Knowledge Map (Interactive)", expanded=True):
+    render_graph()
+
 # 1. Breadcrumbs & Question Card
 active_node_id = st.session_state.agent.session.active_node_id
-active_node = st.session_state.agent.kb.node_map.get(active_node_id)
-# Clean path: "python_basics > Variables > Definition" -> "Variables / Definition"
-breadcrumb = active_node.path.replace(" > ", "  /  ") if active_node else ""
+active_node = st.session_state.agent.kb.node_map.get(active_node_id) if active_node_id else None
+
+if active_node:
+    breadcrumb = active_node.path.replace(" > ", "  /  ")
+    streak_val = st.session_state.agent.session.node_states[active_node_id].correct_streak
+    streak_display = f"{streak_val} / {Config.TUTOR_MASTERY_STREAK}"
+else:
+    # Fallback if node was just mastered (active_node_id cleared)
+    breadcrumb = "Concept Mastered 🏆"
+    streak_display = "COMPLETE"
 
 st.markdown(f"""
 <div style="color: #646cff; font-size: 14px; font-weight: 600; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px;">
@@ -146,7 +218,7 @@ st.markdown(f"""
 </div>
 <div class="question-card">
     <div style="font-size: 14px; text-transform: uppercase; color: #888; margin-bottom: 10px;">
-        {q.difficulty.name} • Streak: {st.session_state.agent.session.node_states[active_node_id].correct_streak} / {Config.TUTOR_MASTERY_STREAK}
+        {q.difficulty.name} • Streak: {streak_display}
     </div>
     {q.content}
 </div>
