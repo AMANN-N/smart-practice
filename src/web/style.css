@@ -1,0 +1,345 @@
+:root {
+    --bg-dark: #050510;
+    --glass-bg: rgba(20, 20, 35, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --primary: #646cff;
+    --primary-glow: rgba(100, 108, 255, 0.5);
+    --success: #00fa9a;
+    --error: #ff4757;
+    --text: #ffffff;
+    --text-muted: #a0a0b0;
+    --sidebar-bg: #0a0a14;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text);
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* --- Layout --- */
+.app-container {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    /* Sidebar Fixed width, Main fluid */
+    height: 100vh;
+    width: 100vw;
+}
+
+/* --- Graph Sidebar --- */
+.graph-sidebar {
+    background-color: var(--sidebar-bg);
+    border-right: 1px solid var(--glass-border);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    padding: 20px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    background: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid var(--glass-border);
+    z-index: 2;
+}
+
+#cy {
+    flex: 1;
+    width: 100%;
+    /* Graph consumes remaining height */
+    background: radial-gradient(circle at center, #0e0e1a 0%, #000 120%);
+}
+
+/* --- Main Content Area --- */
+.content-area {
+    position: relative;
+    background: radial-gradient(circle at top right, #1a1a2e 0%, #050510 60%);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+}
+
+/* --- HUD --- */
+.hud-top {
+    padding: 25px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--primary);
+    text-shadow: 0 0 15px var(--primary-glow);
+}
+
+.stats-pill {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+}
+
+/* --- Panels Container --- */
+.panels-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    /* Center horizontally */
+    align-items: center;
+    /* Center vertically */
+    padding: 20px;
+    position: relative;
+}
+
+/* --- Glass Cards --- */
+.glass-card {
+    background: rgba(20, 20, 35, 0.4);
+    /* More transparent for modern feel */
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    padding: 40px;
+    width: 100%;
+    max-width: 800px;
+    /* Wider card */
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    transition: all 0.4s ease;
+
+    /* Subtle inner glow */
+    box-shadow: inset 0 0 50px rgba(100, 108, 255, 0.05);
+}
+
+.glass-card h1 {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.glass-card p {
+    text-align: center;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+}
+
+/* --- Inputs & Buttons --- */
+.input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+input {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--glass-border);
+    padding: 18px;
+    border-radius: 12px;
+    color: white;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.btn-glow {
+    background: var(--primary);
+    border: none;
+    padding: 15px 30px;
+    border-radius: 12px;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 0 20px var(--primary-glow);
+    transition: all 0.2s;
+}
+
+.btn-glow:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px var(--primary-glow);
+}
+
+.btn-primary {
+    background: var(--text);
+    color: black;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+}
+
+/* --- Questions & Code --- */
+.badge {
+    background: rgba(100, 108, 255, 0.15);
+    color: #aeb4ff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    letter-spacing: 1.2px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.breadcrumb-bar {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.question-text {
+    font-size: 1.3rem;
+    /* Larger text */
+    line-height: 1.6;
+    margin: 30px 0;
+    font-weight: 500;
+}
+
+/* Markdown Styles */
+.question-text code {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9em;
+}
+
+.question-text pre {
+    margin: 20px 0;
+    border-radius: 10px !important;
+    border: 1px solid var(--glass-border);
+    background: #0f0f1a !important;
+    /* Force darker code block */
+}
+
+/* --- Options Animation --- */
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.option-btn {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--glass-border);
+    padding: 25px;
+    border-radius: 16px;
+    color: var(--text-muted);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.05rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.option-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--primary);
+    color: white;
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.option-btn:active {
+    transform: scale(0.98);
+}
+
+.option-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--primary);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.option-btn:hover::before {
+    opacity: 1;
+}
+
+.option-btn:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* --- Feedback --- */
+.feedback-overlay {
+    margin-top: 25px;
+    padding: 25px;
+    border-radius: 16px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--glass-border);
+    animation: slideUp 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+    border-left: 5px solid transparent;
+}
+
+.feedback-overlay.success {
+    border-left-color: var(--success);
+    background: linear-gradient(90deg, rgba(0, 250, 154, 0.05) 0%, transparent 100%);
+}
+
+.feedback-overlay.error {
+    border-left-color: var(--error);
+    background: linear-gradient(90deg, rgba(255, 71, 87, 0.05) 0%, transparent 100%);
+}
+
+.feedback-overlay h2 {
+    margin-bottom: 10px;
+    font-size: 1.4rem;
+}
+
+/* --- Utils --- */
+.hidden {
+    display: none !important;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.6s ease;
+}

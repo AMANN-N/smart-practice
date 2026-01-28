@@ -26,7 +26,7 @@ app.add_middleware(
 tutor_agent = TutorAgent()
 ingestion_agent = IngestionAgent()
 
-@app.get("/")
+@app.get("/api/health")
 def health_check():
     return {"status": "running"}
 
@@ -104,6 +104,81 @@ def submit_answer(req: SubmitAnswerRequest):
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+from fastapi.staticfiles import StaticFiles
+import os
+
+# ... existing endpoints ...
+
+@app.get("/api/kb/graph")
+def get_graph():
+    """Returns the Knowledge Graph structure for Cytoscape.js"""
+    if not tutor_agent.kb:
+        return {"elements": []}
+    
+    elements = []
+    
+    # BFS Traversal
+    stack = [tutor_agent.kb.root]
+    while stack:
+        node = stack.pop(0)
+        
+        # Determine Status
+        status = "pending"
+        if node.id == tutor_agent.session.active_node_id:
+            status = "active"
+        elif tutor_agent.session.coverage_map.get(node.id):
+            status = "mastered"
+            
+        # Add Node
+        elements.append({
+            "data": {
+                "id": node.id,
+                "label": node.name,
+                "status": status,
+                "type": "leaf" if node.is_leaf else "topic"
+            }
+        })
+        
+        # Add Edge
+        if node.parent_id:
+            elements.append({
+                "data": {
+                    "source": node.parent_id,
+                    "target": node.id
+                }
+            })
+            
+        stack.extend(node.children)
+        
+    return {"elements": elements}
+
+@app.get("/api/session/status")
+def get_session_status():
+    if not tutor_agent.session:
+        return {"active": False}
+        
+    active_id = tutor_agent.session.active_node_id
+    if not active_id:
+        return {"active": True, "mastered_all": True}
+        
+    node = tutor_agent.kb.node_map.get(active_id)
+    breadcrumb = node.path.replace(" > ", " / ") if node else ""
+    
+    state = tutor_agent.session.node_states.get(active_id)
+    streak = state.correct_streak if state else 0
+    
+    return {
+        "active": True,
+        "breadcrumb": breadcrumb,
+        "streak": streak,
+        "target_streak": Config.TUTOR_MASTERY_STREAK
+    }
+
+# Create web dir if not exists
+os.makedirs("src/web", exist_ok=True)
+# Mount Static Files (Must be last to avoid catching API routes)
+app.mount("/", StaticFiles(directory="src/web", html=True), name="static")
 
 if __name__ == "__main__":
     import uvicorn

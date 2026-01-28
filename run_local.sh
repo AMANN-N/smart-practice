@@ -16,7 +16,7 @@ if [[ -z "$GEMINI_API_KEY" ]]; then
     exit 1
 fi
 
-echo "🚀 Starting Smart Practice Tutor..."
-# Use the venv python/streamlit explicitly
+echo "🚀 Starting Smart Practice Web App (FastAPI)..."
+# Use the venv python explicitly
 ./venv/bin/pip install -r requirements.txt > /dev/null 2>&1
-./venv/bin/streamlit run src/ui/app.py
+./venv/bin/python src/api/server.py

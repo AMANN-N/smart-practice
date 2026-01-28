@@ -1,6 +1,7 @@
 import os
 import json
 import uuid
+import random
 from typing import Optional, Dict, List
 import google.generativeai as genai
 
@@ -229,7 +230,12 @@ class TutorAgent:
         available = node.questions.get(difficulty, [])
         for q in available:
             if q.id not in history:
-                return q
+                candidates.append(q)
+        
+        if candidates:
+            # Shuffle to ensure variety
+            random.shuffle(candidates)
+            return candidates[0]
         return None
 
     def _generate_dynamic_question(self, node: KnowledgeNode, difficulty: Difficulty) -> Question:
