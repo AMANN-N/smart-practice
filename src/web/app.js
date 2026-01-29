@@ -6,19 +6,20 @@ const app = {
     },
 
     init: async function () {
-        console.log("🚀 App v7 Initialized");
+        console.log("🚀 App v11 Initialized");
 
-        if (window.Graph) {
-            try { Graph.init(); } catch (e) { console.error("Graph init error", e); }
-        }
+        // Wait briefly for Graph
+        setTimeout(() => {
+            if (window.Graph) {
+                try { Graph.init(); } catch (e) { console.error(e); }
+            }
+        }, 100);
 
         await this.loadTopics();
     },
 
     loadTopics: async function () {
-        console.log("📥 Loading topics...");
         const container = document.getElementById('topic-list');
-
         if (!container) return;
 
         try {
@@ -26,14 +27,11 @@ const app = {
             const data = await res.json();
             const topics = data.topics || [];
 
-            console.log("✅ Topics:", topics);
-
             if (topics.length === 0) {
-                container.innerHTML = `<p style="text-align: center; color: #888;">No topics found. Be the first to ingest one!</p>`;
+                container.innerHTML = `<p style="text-align: center; color: #888;">No topics found.</p>`;
                 return;
             }
 
-            // Render Dropdown
             const options = topics.map(t => `<option value="${t}">${t}</option>`).join('');
 
             container.innerHTML = `
@@ -41,14 +39,18 @@ const app = {
                     <select id="topic-dropdown" class="glass-input">
                         ${options}
                     </select>
-                    <button onclick="app.startSelectedTopic()" class="btn-glow">
+                    <button id="btn-start" class="btn-glow">
                         <i class="fa-solid fa-play"></i> Start
                     </button>
                 </div>
             `;
+
+            // EXPLICIT HANDLER
+            document.getElementById('btn-start').onclick = () => this.startSelectedTopic();
+
         } catch (e) {
-            console.error("❌ Failed to load topics:", e);
-            container.innerHTML = `<p style="color: #ff4757; text-align: center;">Error loading topics.</p>`;
+            console.error("Load topics failed", e);
+            container.innerHTML = `<p style="color: #ff4757;">Connection Error</p>`;
         }
     },
 
@@ -130,14 +132,28 @@ const app = {
         if (window.Prism) Prism.highlightAll();
 
         const grid = document.getElementById('options-grid');
-        grid.innerHTML = q.options.map(opt =>
-            `<button onclick="app.submit('${opt}')" class="option-btn">${opt}</button>`
+
+        // Render buttons first to DOM
+        grid.innerHTML = q.options.map((opt, idx) =>
+            `<button id="opt-${idx}" class="option-btn">${opt}</button>`
         ).join('');
+
+        // ATTACH HANDLERS EXPLICITLY
+        q.options.forEach((opt, idx) => {
+            const btn = document.getElementById(`opt-${idx}`);
+            if (btn) {
+                btn.onclick = () => this.submit(opt);
+                // Also touchstart for mobile
+                btn.ontouchstart = () => this.submit(opt);
+            }
+        });
     },
 
     submit: async function (ans) {
-        // DO NOT DISABLE BUTTONS IMMEDIATELY if double click is an issue
-        // But preventing rapid fire is good.
+        // Prevent double fire if clicked multiple times rapidly
+        if (this.submitting) return;
+        this.submitting = true;
+
         const buttons = document.querySelectorAll('.option-btn');
         buttons.forEach(b => b.disabled = true);
 
@@ -154,21 +170,25 @@ const app = {
             const result = await res.json();
 
             const overlay = document.getElementById('feedback-overlay');
-            const title = document.getElementById('feedback-title');
-
             overlay.classList.remove('hidden');
             overlay.classList.remove('success', 'error');
             overlay.classList.add(result.is_correct ? 'success' : 'error');
 
-            title.innerText = result.is_correct ? "Correct! 🎉" : "Incorrect";
+            document.getElementById('feedback-title').innerText = result.is_correct ? "Correct! 🎉" : "Incorrect";
             document.getElementById('feedback-text').innerText = result.feedback;
+
+            // Explicit loop for continues button
+            const nextBtn = overlay.querySelector('button');
+            if (nextBtn) nextBtn.onclick = () => this.nextQuestion();
 
             if (result.is_correct && window.Graph) {
                 Graph.loadData();
             }
         } catch (e) {
-            console.error(e);
+            console.error("Submit Error", e);
             buttons.forEach(b => b.disabled = false);
+        } finally {
+            this.submitting = false;
         }
     },
 
@@ -189,4 +209,5 @@ const app = {
     }
 };
 
+window.app = app;
 window.addEventListener('load', () => app.init());
