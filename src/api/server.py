@@ -5,8 +5,10 @@ from src.api.models import (
     StartSessionRequest, StartSessionResponse,
     QuestionResponse, SubmitAnswerRequest, SubmitAnswerResponse
 )
+from src.core.schema import AssessmentResult
 from src.agents.ingestion_agent import IngestionAgent
 from src.agents.tutor_agent import TutorAgent
+from src.core.config import Config
 import os
 
 app = FastAPI(title="Smart Practice API")
@@ -50,6 +52,19 @@ def ingest_topic(req: IngestRequest):
             message=f"Successfully ingested {req.topic_name}",
             kb_path=kb_path
         )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/topics")
+def list_topics():
+    """Returns list of available topics from data/db"""
+    try:
+        if not os.path.exists("data/db"):
+            return {"topics": []}
+            
+        files = os.listdir("data/db")
+        topics = [f.replace(".json", "") for f in files if f.endswith(".json")]
+        return {"topics": sorted(topics)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

@@ -228,6 +228,7 @@ class TutorAgent:
 
     def _fetch_available_question(self, node: KnowledgeNode, difficulty: Difficulty, history: List[str]) -> Optional[Question]:
         available = node.questions.get(difficulty, [])
+        candidates = []
         for q in available:
             if q.id not in history:
                 candidates.append(q)

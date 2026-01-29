@@ -6,34 +6,64 @@ const app = {
     },
 
     init: async function () {
-        Graph.init();
-        await this.loadTopics();
+        console.log("🚀 App v7 Initialized");
 
-        // Check if session active? For now just reset
-        // In real app, check /api/session/status
+        if (window.Graph) {
+            try { Graph.init(); } catch (e) { console.error("Graph init error", e); }
+        }
+
+        await this.loadTopics();
     },
 
     loadTopics: async function () {
-        // We typically would have an endpoint for this. 
-        // For MVP, we'll brute force or use Ingestion list
-        // Let's mock or fetch from a new endpoint if we had one.
-        // I'll add a simple hardcoded list + fetch attempt if we add that EP later.
-
-        // Mocking for now as we didn't explicitly add GET /topics
-        const topics = ["python_basics"];
+        console.log("📥 Loading topics...");
         const container = document.getElementById('topic-list');
-        container.innerHTML = topics.map(t =>
-            `<button onclick="app.startSession('${t}')" class="option-btn" style="text-align:center">
-                <i class="fa-solid fa-book"></i> ${t}
-            </button>`
-        ).join('');
+
+        if (!container) return;
+
+        try {
+            const res = await fetch('/api/topics');
+            const data = await res.json();
+            const topics = data.topics || [];
+
+            console.log("✅ Topics:", topics);
+
+            if (topics.length === 0) {
+                container.innerHTML = `<p style="text-align: center; color: #888;">No topics found. Be the first to ingest one!</p>`;
+                return;
+            }
+
+            // Render Dropdown
+            const options = topics.map(t => `<option value="${t}">${t}</option>`).join('');
+
+            container.innerHTML = `
+                <div class="topic-selector-group">
+                    <select id="topic-dropdown" class="glass-input">
+                        ${options}
+                    </select>
+                    <button onclick="app.startSelectedTopic()" class="btn-glow">
+                        <i class="fa-solid fa-play"></i> Start
+                    </button>
+                </div>
+            `;
+        } catch (e) {
+            console.error("❌ Failed to load topics:", e);
+            container.innerHTML = `<p style="color: #ff4757; text-align: center;">Error loading topics.</p>`;
+        }
+    },
+
+    startSelectedTopic: function () {
+        const select = document.getElementById('topic-dropdown');
+        if (select && select.value) {
+            this.startSession(select.value);
+        }
     },
 
     ingestTopic: async function () {
-        const name = document.getElementById('new-topic-input').value;
+        const input = document.getElementById('new-topic-input');
+        const name = input.value;
         if (!name) return;
 
-        // Show loading state...
         const btn = document.querySelector('.input-group button');
         const origText = btn.innerHTML;
         btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
@@ -44,7 +74,6 @@ const app = {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ topic_name: name })
             });
-            // Refresh list (mock)
             app.startSession(name);
         } catch (e) {
             alert("Ingestion failed: " + e);
@@ -55,53 +84,51 @@ const app = {
     startSession: async function (topicName) {
         this.state.topic = topicName;
 
-        // Start Session API
-        await fetch('/api/session/start', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id: this.state.user, topic_name: topicName })
-        });
+        try {
+            await fetch('/api/session/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: this.state.user, topic_name: topicName })
+            });
 
-        // Transition UI
-        document.getElementById('setup-panel').classList.add('hidden');
-        document.getElementById('question-panel').classList.remove('hidden');
+            document.getElementById('setup-panel').classList.add('hidden');
+            document.getElementById('question-panel').classList.remove('hidden');
 
-        // Load Data
-        await Graph.loadData();
-        await this.nextQuestion();
+            if (window.Graph) await Graph.loadData();
+            await this.nextQuestion();
+        } catch (e) {
+            console.error("Session Start Error:", e);
+            alert("Could not start session.");
+        }
     },
 
     nextQuestion: async function () {
-        // Reset UI
         document.getElementById('feedback-overlay').classList.add('hidden');
         document.getElementById('options-grid').innerHTML = '';
-        document.getElementById('question-content').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
+        document.getElementById('question-content').innerHTML = '<div style="text-align:center; padding: 20px;"><i class="fa-solid fa-spinner fa-spin"></i> Generating...</div>';
 
-        // Fetch
-        const res = await fetch('/api/session/next');
-        const q = await res.json();
-        this.state.currentQ = q;
+        try {
+            const res = await fetch('/api/session/next');
+            const q = await res.json();
+            this.state.currentQ = q;
 
-        if (q.id === "DONE") {
-            this.renderDone();
-            return;
+            if (q.id === "DONE") {
+                this.renderDone();
+                return;
+            }
+
+            this.renderQuestion(q);
+            this.updateStats();
+        } catch (e) {
+            console.error("Next Q Error:", e);
         }
-
-        // Render
-        this.renderQuestion(q);
-        this.updateStats();
     },
 
     renderQuestion: function (q) {
-        // Breadcrumb logic
-        document.getElementById('difficulty-badge').innerText = q.difficulty;
-
-        // Content
+        document.getElementById('difficulty-badge').innerText = q.difficulty || "PRACTICE";
         document.getElementById('question-content').innerHTML = q.content;
-        // Trigger Prism highlight?
         if (window.Prism) Prism.highlightAll();
 
-        // Options
         const grid = document.getElementById('options-grid');
         grid.innerHTML = q.options.map(opt =>
             `<button onclick="app.submit('${opt}')" class="option-btn">${opt}</button>`
@@ -109,52 +136,57 @@ const app = {
     },
 
     submit: async function (ans) {
-        // Disable buttons
-        document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+        // DO NOT DISABLE BUTTONS IMMEDIATELY if double click is an issue
+        // But preventing rapid fire is good.
+        const buttons = document.querySelectorAll('.option-btn');
+        buttons.forEach(b => b.disabled = true);
 
-        // API
-        const res = await fetch('/api/session/submit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                question_id: this.state.currentQ.id,
-                user_answer: ans
-            })
-        });
-        const result = await res.json();
+        try {
+            const res = await fetch('/api/session/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    question_id: this.state.currentQ.id,
+                    user_answer: ans
+                })
+            });
 
-        // Show Feedback
-        const overlay = document.getElementById('feedback-overlay');
-        const title = document.getElementById('feedback-title');
+            const result = await res.json();
 
-        overlay.classList.remove('hidden');
-        overlay.classList.remove('success', 'error');
-        overlay.classList.add(result.is_correct ? 'success' : 'error');
+            const overlay = document.getElementById('feedback-overlay');
+            const title = document.getElementById('feedback-title');
 
-        title.innerText = result.is_correct ? "Correct! 🎉" : "Incorrect";
-        document.getElementById('feedback-text').innerText = result.feedback;
+            overlay.classList.remove('hidden');
+            overlay.classList.remove('success', 'error');
+            overlay.classList.add(result.is_correct ? 'success' : 'error');
 
-        // Refresh Graph to show progress (mastery)
-        if (result.is_correct) {
-            Graph.loadData();
+            title.innerText = result.is_correct ? "Correct! 🎉" : "Incorrect";
+            document.getElementById('feedback-text').innerText = result.feedback;
+
+            if (result.is_correct && window.Graph) {
+                Graph.loadData();
+            }
+        } catch (e) {
+            console.error(e);
+            buttons.forEach(b => b.disabled = false);
         }
     },
 
     updateStats: async function () {
-        const res = await fetch('/api/session/status');
-        const status = await res.json();
-
-        if (status.breadcrumb) {
-            document.getElementById('breadcrumb-text').innerText = status.breadcrumb;
-        }
-        document.getElementById('streak-display').innerText = `🔥 ${status.streak} Streak`;
+        try {
+            const res = await fetch('/api/session/status');
+            const status = await res.json();
+            if (status.breadcrumb) {
+                document.getElementById('breadcrumb-text').innerText = status.breadcrumb;
+            }
+            document.getElementById('streak-display').innerText = `🔥 ${status.streak} Streak`;
+        } catch (e) { }
     },
 
     renderDone: function () {
-        document.getElementById('question-content').innerHTML = "<h1>🎉 Topic Mastered!</h1><p>You have conquered this knowledge graph.</p>";
+        document.getElementById('question-content').innerHTML = "<h1>🎉 Topic Mastered!</h1>";
         document.getElementById('options-grid').innerHTML = `<button onclick="location.reload()" class="btn-glow">Restart</button>`;
     }
 };
 
-// Auto Init
 window.addEventListener('load', () => app.init());

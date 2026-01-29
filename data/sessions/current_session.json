@@ -1,17 +1,7 @@
 {
   "user_id": "user_web",
   "current_topic": "python_basics",
-  "node_states": {
-    "6cd002e8-76f4-4305-9c0e-5a8e6ec9ccac": {
-      "node_id": "6cd002e8-76f4-4305-9c0e-5a8e6ec9ccac",
-      "mastery_score": 0.0,
-      "attempts": 1,
-      "correct_streak": 1,
-      "history": [
-        "931f2115-8c9a-4802-a38a-5bdaea36a6a6"
-      ]
-    }
-  },
-  "active_node_id": "6cd002e8-76f4-4305-9c0e-5a8e6ec9ccac",
+  "node_states": {},
+  "active_node_id": null,
   "coverage_map": {}
 }

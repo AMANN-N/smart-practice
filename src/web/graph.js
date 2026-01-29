@@ -2,94 +2,123 @@ const Graph = {
     cy: null,
 
     init: function () {
+        console.log("🕸️ Graph.init called via v6");
+
+        const container = document.getElementById('cy');
+        if (!container) {
+            console.error("CRITICAL: #cy container not found");
+            return;
+        }
+
+        // VISUAL CONFIRMATION
+        container.style.border = "1px solid #6c5ce7";
+
+        // Init Cytoscape
         this.cy = cytoscape({
-            container: document.getElementById('cy'),
+            container: container,
+            wheelSensitivity: 0.2,
             style: [
                 {
                     selector: 'node',
                     style: {
-                        'background-color': '#2a2a3b',
+                        'background-color': '#1e1e2e',
                         'label': 'data(label)',
-                        'color': '#a0a0b0',
-                        'font-size': '12px',
-                        'font-family': 'Outfit',
-                        'text-valign': 'bottom',
-                        'text-margin-y': 5,
-                        'width': 25,
-                        'height': 25,
-                        'border-width': 2,
-                        'border-color': '#555'
+                        'color': '#dfe6e9',
+                        'font-size': '14px',
+                        'font-family': 'Outfit, sans-serif',
+                        'font-weight': '500',
+                        'text-valign': 'center',
+                        'text-halign': 'center',
+                        'width': 'label',
+                        'padding': '12px',
+                        'shape': 'round-rectangle',
+                        'border-width': 1,
+                        'border-color': '#636e72',
+                        'text-wrap': 'wrap',
+                        'text-max-width': '120px'
                     }
                 },
                 {
                     selector: 'edge',
                     style: {
                         'width': 2,
-                        'line-color': '#444',
-                        'curve-style': 'taxi', /* Taxi style for tree lines */
+                        'line-color': '#636e72',
+                        'curve-style': 'taxi',
                         'taxi-direction': 'downward',
                         'target-arrow-shape': 'triangle',
-                        'target-arrow-color': '#444'
+                        'target-arrow-color': '#636e72',
+                        'arrow-scale': 1.2
                     }
                 },
-                // Active (Current Focus)
                 {
                     selector: 'node[status = "active"]',
                     style: {
-                        'background-color': '#646cff', // Primary
-                        'border-color': '#fff',
-                        'width': 40,
-                        'height': 40,
-                        'font-size': '14px',
-                        'font-weight': 'bold',
+                        'background-color': '#646cff',
+                        'border-color': '#aeb4ff',
                         'color': '#fff',
-                        'shadow-blur': 25,
+                        'border-width': 2,
+                        'shadow-blur': 10,
                         'shadow-color': '#646cff'
                     }
                 },
-                // Mastered
                 {
                     selector: 'node[status = "mastered"]',
                     style: {
-                        'background-color': '#00fa9a', // Success
-                        'border-color': '#00fa9a',
-                        'shadow-blur': 15,
-                        'shadow-color': '#00fa9a'
+                        'background-color': '#00fa9a',
+                        'border-color': '#00b894',
+                        'color': '#000',
+                        'font-weight': '700'
                     }
                 }
             ]
         });
+
+        console.log("🕸️ Graph Module Initialized Success");
     },
 
     loadData: async function () {
+        if (!this.cy) return;
+
         try {
+            console.log("🕸️ Fetching Graph Data...");
             const response = await fetch('/api/kb/graph');
             const data = await response.json();
 
+            // Clear and add
             this.cy.elements().remove();
+
+            if (!data.elements || data.elements.length === 0) {
+                console.warn("⚠️ No graph elements returned from API");
+                // Add dummy node to prove rendering works if API empty
+                this.cy.add([
+                    { group: 'nodes', data: { id: 'dummy', label: 'Empty Knowledge Base', status: 'pending' } }
+                ]);
+                this.cy.center();
+                return;
+            }
+
             this.cy.add(data.elements);
 
-            // Tree Layout
+            // Layout
             const layout = this.cy.layout({
                 name: 'dagre',
-                rankDir: 'TB', // Top-to-Bottom
+                rankDir: 'TB',
                 spacingFactor: 1.2,
+                padding: 30,
                 animate: true,
-                animationDuration: 500,
-                fit: true,
-                padding: 30
+                animationDuration: 500
             });
             layout.run();
-        } catch (e) {
-            console.error("Graph Load Fail", e);
-        }
-    },
 
-    highlightNode: function (nodeId) {
-        if (!this.cy) return;
-        this.cy.zoom({
-            level: 1.5,
-            position: this.cy.$id(nodeId).position()
-        });
+            // Center
+            setTimeout(() => {
+                this.cy.fit();
+                this.cy.center();
+            }, 600);
+
+            console.log("✅ Graph Rendered with elements:", data.elements.length);
+        } catch (e) {
+            console.error("❌ Graph Load Fail", e);
+        }
     }
 };
