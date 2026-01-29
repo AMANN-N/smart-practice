@@ -24,8 +24,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css" rel="stylesheet" />
 
-    <!-- App Styles (v6) -->
-    <link rel="stylesheet" href="style.css?v=6">
+    <!-- App Styles (v13) -->
+    <link rel="stylesheet" href="style.css?v=13">
 </head>
 
 <body>
@@ -33,8 +33,12 @@
     <div class="app-container">
         <!-- Sidebar -->
         <aside class="graph-sidebar">
-            <div class="sidebar-header">
-                <i class="fa-solid fa-network-wired"></i> Knowledge Tree
+            <div class="sidebar-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <span><i class="fa-solid fa-network-wired"></i> Knowledge Tree</span>
+                <button onclick="Graph.fit()" style="background:none; border:none; color: #a0a0b0; cursor: pointer;"
+                    title="Fit View">
+                    <i class="fa-solid fa-compress"></i>
+                </button>
             </div>
             <!-- GRAPH CONTAINER with debug border -->
             <div id="cy" style="border: 2px dashed #444;"></div>
@@ -91,9 +95,9 @@
         </main>
     </div>
 
-    <!-- Scripts (v11) -->
-    <script src="graph.js?v=11"></script>
-    <script src="app.js?v=11"></script>
+    <!-- Scripts (v14) -->
+    <script src="graph.js?v=14"></script>
+    <script src="app.js?v=13"></script>
 </body>
 
 </html>

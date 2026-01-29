@@ -1,7 +1,75 @@
 {
   "user_id": "user_web",
   "current_topic": "python_basics",
-  "node_states": {},
-  "active_node_id": null,
-  "coverage_map": {}
+  "node_states": {
+    "6cd002e8-76f4-4305-9c0e-5a8e6ec9ccac": {
+      "node_id": "6cd002e8-76f4-4305-9c0e-5a8e6ec9ccac",
+      "mastery_score": 0.0,
+      "attempts": 4,
+      "correct_streak": 4,
+      "history": [
+        "931f2115-8c9a-4802-a38a-5bdaea36a6a6",
+        "96867fc7-cd3b-4c98-9886-8fe8c98fe00c",
+        "9e9527b9-08b3-4ac1-9862-477b607afd54",
+        "142a9307-f646-40e4-9433-56922d78c3a8"
+      ]
+    },
+    "a0d4da7b-0305-40ad-aadd-41d4e15d6d74": {
+      "node_id": "a0d4da7b-0305-40ad-aadd-41d4e15d6d74",
+      "mastery_score": 0.0,
+      "attempts": 4,
+      "correct_streak": 4,
+      "history": [
+        "d87574b8-d599-4a4a-b39c-48c8eac59c1e",
+        "1418afe1-7616-40cd-9faa-a917f87c379c",
+        "40714d36-9683-479b-9c8e-77df8a2a79c2",
+        "2961ccb1-a44e-49dc-aa3a-1e98b545cb79"
+      ]
+    },
+    "3025d560-cd38-4fb2-9fa5-b0c7b9f23571": {
+      "node_id": "3025d560-cd38-4fb2-9fa5-b0c7b9f23571",
+      "mastery_score": 0.0,
+      "attempts": 4,
+      "correct_streak": 4,
+      "history": [
+        "3134d386-07d5-480f-9c79-8cd8a575c4b4",
+        "db99ee78-d486-457f-b508-93306d7d4a98",
+        "c055408b-3331-4a97-af6e-84cb009a2541",
+        "e5628643-47ea-4d7e-b1f1-5870d360fa53"
+      ]
+    },
+    "9c485712-7d6a-43b7-a17e-4496a282219a": {
+      "node_id": "9c485712-7d6a-43b7-a17e-4496a282219a",
+      "mastery_score": 0.0,
+      "attempts": 9,
+      "correct_streak": 4,
+      "history": [
+        "67f27407-e735-4e31-910b-563ebcdea0e0",
+        "3227bbb7-acb0-40e2-8388-a37d5b098c67",
+        "50e20e51-1275-4253-9f76-c45febd8eac2",
+        "408555a0-b9a1-44a2-b423-86e7ca8bb3d2",
+        "1dbe10fa-78fb-4601-9ee8-df20e0f8f412",
+        "a8a246ea-6d7d-476f-aed4-b8c6c7b62a22",
+        "0234d90f-26d4-43ce-812f-eac8b5f3b527",
+        "37c6131d-b464-4da3-90e6-a559283101d2",
+        "c151825c-40d8-421c-b594-edf525199db0"
+      ]
+    },
+    "ccf2bccc-13e7-4a9f-9ff0-7d42d99a9dfa": {
+      "node_id": "ccf2bccc-13e7-4a9f-9ff0-7d42d99a9dfa",
+      "mastery_score": 0.0,
+      "attempts": 1,
+      "correct_streak": 1,
+      "history": [
+        "17dcca15-e9b1-4326-a661-654085b0ae06"
+      ]
+    }
+  },
+  "active_node_id": "ccf2bccc-13e7-4a9f-9ff0-7d42d99a9dfa",
+  "coverage_map": {
+    "6cd002e8-76f4-4305-9c0e-5a8e6ec9ccac": true,
+    "a0d4da7b-0305-40ad-aadd-41d4e15d6d74": true,
+    "3025d560-cd38-4fb2-9fa5-b0c7b9f23571": true,
+    "9c485712-7d6a-43b7-a17e-4496a282219a": true
+  }
 }

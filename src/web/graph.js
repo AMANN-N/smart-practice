@@ -13,8 +13,8 @@ const Graph = {
             this.cy = cytoscape({
                 container: container,
                 wheelSensitivity: 0.2,
-                maxZoom: 2.5,
-                minZoom: 0.5,
+                maxZoom: 5,
+                minZoom: 0.1,
                 style: [
                     // NODE DEFAULTS
                     {
@@ -148,6 +148,13 @@ const Graph = {
 
     stopPulse: function () {
         if (this.cy) this.cy.stop(true);
+    },
+
+    fit: function () {
+        if (this.cy) {
+            this.cy.fit();
+            this.cy.center();
+        }
     }
 };
 

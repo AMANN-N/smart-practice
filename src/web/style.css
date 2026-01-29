@@ -28,7 +28,7 @@ body {
 /* --- Layout --- */
 .app-container {
     display: grid;
-    grid-template-columns: 350px 1fr;
+    grid-template-columns: 40vw 1fr;
     height: 100vh;
     width: 100vw;
 }
