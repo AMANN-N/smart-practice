@@ -322,23 +322,26 @@ select.glass-input option {
 
 /* --- Feedback --- */
 .feedback-overlay {
-    margin-top: 25px;
-    padding: 25px;
-    border-radius: 16px;
-    background: rgba(0, 0, 0, 0.4);
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    /* Lighter bg */
     border: 1px solid var(--glass-border);
-    border-left: 5px solid transparent;
-    z-index: 200;
-    /* HIGHEST */
-    position: absolute;
-    /* Float over */
-    bottom: -100px;
-    left: 0;
-    right: 0;
+
+    /* Static positioning */
+    position: relative;
     opacity: 0;
-    pointer-events: none;
-    /* Default to click-through */
-    transition: all 0.3s;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    display: none;
+    /* controlled by js hidden class, but explicit here helps */
+}
+
+.feedback-overlay:not(.hidden) {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .feedback-overlay:not(.hidden) {

@@ -109,18 +109,27 @@ const Graph = {
             // NATIVE LAYOUT FALLBACK
             setTimeout(() => {
                 const layout = this.cy.layout({
-                    name: 'breadthfirst', // Native, reliable
+                    name: 'breadthfirst',
                     directed: true,
                     padding: 40,
-                    spacingFactor: 1.5,   // Space out nodes
+                    spacingFactor: 1.5,
                     animate: true,
                     animationDuration: 800,
+                    app: undefined, // clean up
                     stop: () => {
+                        // FORCE LEFT-TO-RIGHT (Swap X and Y)
+                        this.cy.nodes().forEach(node => {
+                            const pos = node.position();
+                            node.position({ x: pos.y, y: pos.x });
+                        });
+
+                        this.cy.fit();
+                        this.cy.center();
                         this.startPulse();
                     }
                 });
                 layout.run();
-                console.log("Layout: Breadthfirst executed");
+                console.log("Layout: Breadthfirst (Rotated LR) executed");
             }, 50);
 
         } catch (e) {
